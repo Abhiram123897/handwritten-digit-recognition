@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Digit Recognizer</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-custom px-3">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">✍️ Digit Recognizer</a>
+      <div class="d-flex align-items-center gap-3">
+        <a class="nav-link d-inline" href="/">Home</a>
+        <a class="nav-link d-inline" href="/dashboard">Dashboard</a>
+        <button id="themeToggle" class="theme-toggle" title="Toggle dark mode">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1>Dashboard</h1>
+    <p>Model performance, training visualizations, and your prediction history.</p>
+  </header>
+
+  <main class="container pb-5">
+    <!-- ---------------- Metrics ---------------- -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-4">
+        <div class="glass-card metric-card">
+          <div class="confidence-label">Test Accuracy</div>
+          <div class="metric-value" id="mAccuracy">–</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="glass-card metric-card">
+          <div class="confidence-label">Test Loss</div>
+          <div class="metric-value" id="mLoss">–</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="glass-card metric-card">
+          <div class="confidence-label">Epochs Trained</div>
+          <div class="metric-value" id="mEpochs">–</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------- Visualizations ---------------- -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="glass-card">
+          <h5 class="card-title-custom">📈 Accuracy &amp; Loss</h5>
+          <img
+            class="viz-img"
+            src="{{ url_for('static', filename='images/accuracy_loss.png') }}"
+            alt="Accuracy and loss curves"
+            onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<p class=\'text-muted\'>Run train.py to generate this chart.</p>')"
+          />
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="glass-card">
+          <h5 class="card-title-custom">🔢 Confusion Matrix</h5>
+          <img
+            class="viz-img"
+            src="{{ url_for('static', filename='images/confusion_matrix.png') }}"
+            alt="Confusion matrix"
+            onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<p class=\'text-muted\'>Run train.py to generate this chart.</p>')"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------- History ---------------- -->
+    <div class="glass-card">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h5 class="card-title-custom mb-0">🕑 Prediction History</h5>
+        <div class="d-flex gap-2">
+          <a href="/history/export" class="btn btn-outline-custom btn-sm">Download CSV</a>
+          <button id="clearHistoryBtn" class="btn btn-primary-custom btn-sm">Clear History</button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-custom align-middle">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Image</th>
+              <th>Predicted</th>
+              <th>Confidence</th>
+              <th>Source</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr><td colspan="6" class="text-center text-muted">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>Built with TensorFlow/Keras CNN · Flask · Bootstrap 5 · Chart.js</footer>
+
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

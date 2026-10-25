@@ -1,0 +1,19 @@
+# ---- Core ML (training) ----
+# CPU build keeps the footprint small and works everywhere (incl. Render).
+# Version ranges so it installs on Python 3.9-3.13. If you are on Python 3.12
+# and want the exact versions this project was verified with, see the pins in
+# the comments beside each line.
+tensorflow-cpu>=2.16,<2.21   # verified with 2.17.0 on Python 3.12
+numpy>=1.26,<2.1             # verified with 1.26.4
+scikit-learn>=1.4            # verified with 1.5.1
+matplotlib>=3.8             # verified with 3.9.2
+seaborn>=0.13               # verified with 0.13.2
+
+# ---- Backend ----
+Flask>=3.0                  # verified with 3.0.3
+flask-cors>=4.0             # verified with 4.0.1
+opencv-python-headless>=4.9 # verified with 4.10.0.84
+Pillow>=10.0                # verified with 10.4.0
+
+# ---- Production server ----
+gunicorn>=22.0              # verified with 22.0.0

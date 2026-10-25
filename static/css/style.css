@@ -1,0 +1,217 @@
+/* =========================================================================
+   style.css — Handwritten Digit Recognition
+   Theming (light/dark via CSS variables), gradients, cards, animations,
+   and responsive tweaks.
+   ========================================================================= */
+
+:root {
+  --bg-gradient-start: #667eea;
+  --bg-gradient-end: #764ba2;
+  --surface: #ffffff;
+  --surface-alt: #f7f8fc;
+  --text: #1f2430;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --accent: #ec4899;
+  --success: #10b981;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  --radius: 18px;
+}
+
+[data-theme="dark"] {
+  --bg-gradient-start: #0f2027;
+  --bg-gradient-end: #2c5364;
+  --surface: #1b2130;
+  --surface-alt: #232b3d;
+  --text: #e5e9f0;
+  --text-muted: #9aa5b8;
+  --border: #323a4d;
+  --primary: #818cf8;
+  --primary-hover: #a5b4fc;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", Roboto, system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+  background-attachment: fixed;
+  transition: background 0.4s ease, color 0.3s ease;
+}
+
+/* ---------------- Navbar ---------------- */
+.navbar-custom {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link { color: #fff !important; font-weight: 600; }
+.navbar-custom .nav-link:hover { opacity: 0.8; }
+
+/* ---------------- Hero / landing ---------------- */
+.hero {
+  text-align: center;
+  color: #fff;
+  padding: 3.5rem 1rem 2rem;
+}
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.25);
+}
+.hero p { font-size: 1.1rem; opacity: 0.92; max-width: 640px; margin: 0.75rem auto 0; }
+
+/* ---------------- Cards ---------------- */
+.glass-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.4s ease;
+  animation: fadeInUp 0.5s ease both;
+}
+.glass-card:hover { transform: translateY(-3px); }
+.card-title-custom { font-weight: 700; margin-bottom: 1rem; color: var(--text); }
+
+/* ---------------- Canvas ---------------- */
+#drawCanvas {
+  background: #000;
+  border-radius: 14px;
+  cursor: crosshair;
+  touch-action: none;
+  width: 280px;
+  height: 280px;
+  max-width: 100%;
+}
+
+/* ---------------- Buttons ---------------- */
+.btn-primary-custom {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.55rem 1.3rem;
+  transition: filter 0.2s ease, transform 0.1s ease;
+}
+.btn-primary-custom:hover { filter: brightness(1.08); color: #fff; }
+.btn-primary-custom:active { transform: scale(0.97); }
+.btn-outline-custom {
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  background: transparent;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.5rem 1.2rem;
+}
+.btn-outline-custom:hover { background: var(--primary); color: #fff; }
+
+/* ---------------- Upload / drop zone ---------------- */
+.dropzone {
+  border: 2px dashed var(--border);
+  border-radius: 14px;
+  padding: 1.8rem;
+  text-align: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.dropzone.dragover { border-color: var(--primary); background: var(--surface-alt); }
+#previewImg {
+  max-width: 160px;
+  max-height: 160px;
+  border-radius: 12px;
+  margin-top: 1rem;
+  display: none;
+  border: 1px solid var(--border);
+}
+
+/* ---------------- Result ---------------- */
+.result-digit {
+  font-size: 5rem;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.confidence-label { font-weight: 600; color: var(--text-muted); }
+.progress { height: 22px; border-radius: 12px; background: var(--surface-alt); }
+.progress-bar {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  font-weight: 600;
+}
+
+/* ---------------- Spinner / loading ---------------- */
+.loading-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: var(--radius);
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+.loading-overlay.active { display: flex; }
+
+/* ---------------- Dashboard table ---------------- */
+.table-custom { color: var(--text); }
+.table-custom thead { background: var(--surface-alt); }
+.thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: #000;
+  object-fit: contain;
+}
+.metric-card { text-align: center; }
+.metric-value { font-size: 2rem; font-weight: 800; color: var(--primary); }
+.viz-img {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+/* ---------------- Dark mode toggle ---------------- */
+.theme-toggle {
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.1rem;
+}
+
+/* ---------------- Animations ---------------- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------- Responsive ---------------- */
+@media (max-width: 576px) {
+  .result-digit { font-size: 3.5rem; }
+  #drawCanvas { width: 240px; height: 240px; }
+  .hero { padding-top: 2rem; }
+}
+
+footer {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 2rem 1rem;
+  font-size: 0.9rem;
+}

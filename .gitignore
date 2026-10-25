@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Project artifacts
+uploads/*
+!uploads/.gitkeep
+database/*.db
+static/images/*.png
+
+# Keep trained model out of git if large (uncomment if desired)
+# model/*.h5
+# model/*.tflite
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.log

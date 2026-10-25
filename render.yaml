@@ -1,0 +1,18 @@
+# render.yaml — Render.com deployment blueprint
+# Deploy: push to a Git repo, then "New +" -> "Blueprint" on Render and point it here.
+services:
+  - type: web
+    name: digit-recognizer
+    runtime: python
+    plan: free                      # 512 MB RAM; TFLite inference keeps us within budget
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.3"
+    # Persistent disk so SQLite history + uploaded images survive restarts.
+    disk:
+      name: data
+      mountPath: /opt/render/project/src/database
+      sizeGB: 1
