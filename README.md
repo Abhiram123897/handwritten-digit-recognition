@@ -124,13 +124,22 @@ venv\Scripts\activate
 # macOS/Linux:
 source venv/bin/activate
 
-# 3. Install dependencies
+# 3a. To TRAIN the model, install the training dependencies (needs Python 3.10-3.12):
+pip install -r requirements-train.txt
+
+# 3b. To only RUN the app (serving), the lightweight runtime deps are enough:
 pip install -r requirements.txt
 ```
 
-> Note: `requirements.txt` uses `tensorflow-cpu`, which installs everywhere and
-> keeps the footprint small (ideal for Render's free tier). Swap to
-> `tensorflow` if you want GPU training locally.
+> Two requirements files keep things lean:
+> - **`requirements.txt`** — runtime only. Uses a tiny standalone TFLite runtime
+>   (`ai-edge-litert`), no full TensorFlow. This is what Render installs, so the
+>   app fits comfortably in the free tier's 512 MB RAM.
+> - **`requirements-train.txt`** — adds TensorFlow/Keras, scikit-learn, and
+>   Matplotlib/Seaborn, needed only to run `train.py`.
+>
+> If you plan to both train and run locally, just install
+> `requirements-train.txt` (it includes the serving deps too).
 
 ---
 
@@ -194,12 +203,16 @@ This app is designed to run as a single, long-lived Flask service — ideal for
 1. Push the project to a Git repository.
 2. On Render: **New + → Blueprint**, and select this repo (it reads
    `render.yaml`).
-3. Render runs `pip install -r requirements.txt` and starts
-   `gunicorn app:app`. A 1 GB persistent disk is mounted for the database.
+3. Render runs `pip install -r requirements.txt` (lightweight runtime deps)
+   and starts `gunicorn app:app`.
 4. Commit a trained `model/digit_model.tflite` (and/or `.h5`) so the app can
    serve predictions, or run training as part of your build.
 
-The free tier has 512 MB RAM; TFLite inference keeps memory usage comfortable.
+The free tier has 512 MB RAM and no persistent disk, so inference uses a tiny
+standalone TFLite runtime (`ai-edge-litert`) — full TensorFlow is **not**
+installed on the server. Note that on the free tier the SQLite history and
+uploaded thumbnails reset on restart; add a paid persistent disk (or external
+DB) if you need durable history.
 
 ---
 

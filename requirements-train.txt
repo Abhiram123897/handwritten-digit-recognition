@@ -1,0 +1,24 @@
+# =========================================================================
+# requirements-train.txt  —  TRAINING dependencies
+# =========================================================================
+# Install these locally to train the model with train.py. They are NOT needed
+# on the deployed server (serving uses the lightweight requirements.txt).
+#
+#   pip install -r requirements-train.txt
+#   python train.py
+#
+# Use Python 3.10-3.12 (TensorFlow does not yet publish wheels for 3.13+).
+
+# ---- Core ML (training) ----
+tensorflow-cpu>=2.16,<2.21     # verified with 2.17.0 on Python 3.12
+numpy>=1.26,<2.1               # verified with 1.26.4
+scikit-learn>=1.4              # verified with 1.5.1 (confusion matrix / report)
+matplotlib>=3.8                # verified with 3.9.2 (accuracy/loss, CM charts)
+seaborn>=0.13                  # verified with 0.13.2
+
+# ---- Shared with runtime (so the app also runs locally after training) ----
+Flask>=3.0
+flask-cors>=4.0
+opencv-python-headless>=4.9
+Pillow>=10.0
+gunicorn>=22.0

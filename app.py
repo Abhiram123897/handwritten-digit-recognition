@@ -84,15 +84,34 @@ class ModelWrapper:
         self._load()
 
     def _load(self):
-        # Prefer TFLite (small, fast, low memory) --------------------------- #
+        # Prefer a standalone TFLite interpreter (small, fast, low memory).
+        # Order of preference:
+        #   1. ai-edge-litert   (current standalone LiteRT runtime)
+        #   2. tflite_runtime   (older standalone runtime)
+        #   3. tensorflow.lite  (full TF — heavy; last resort)
+        # Using a standalone runtime keeps memory well under Render's 512 MB
+        # free-tier limit; importing full TensorFlow here would exceed it.
         if os.path.exists(TFLITE_PATH):
             try:
-                try:
-                    import tflite_runtime.interpreter as tflite  # type: ignore
-                    interpreter = tflite.Interpreter(model_path=TFLITE_PATH)
-                except ImportError:
-                    import tensorflow as tf  # full TF also provides the interpreter
-                    interpreter = tf.lite.Interpreter(model_path=TFLITE_PATH)
+                interpreter = None
+                for loader in ("ai_edge_litert", "tflite_runtime", "tensorflow"):
+                    try:
+                        if loader == "ai_edge_litert":
+                            from ai_edge_litert.interpreter import Interpreter  # type: ignore
+                            interpreter = Interpreter(model_path=TFLITE_PATH)
+                        elif loader == "tflite_runtime":
+                            import tflite_runtime.interpreter as tflite  # type: ignore
+                            interpreter = tflite.Interpreter(model_path=TFLITE_PATH)
+                        else:
+                            import tensorflow as tf  # heavy fallback
+                            interpreter = tf.lite.Interpreter(model_path=TFLITE_PATH)
+                        print(f"[model] TFLite interpreter via '{loader}'")
+                        break
+                    except ImportError:
+                        continue
+
+                if interpreter is None:
+                    raise ImportError("No TFLite interpreter runtime available.")
 
                 interpreter.allocate_tensors()
                 self._tflite = interpreter
