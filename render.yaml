@@ -11,8 +11,8 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: "3.12.3"
-    # Persistent disk so SQLite history + uploaded images survive restarts.
-    disk:
-      name: data
-      mountPath: /opt/render/project/src/database
-      sizeGB: 1
+    # NOTE: Persistent disks are not available on Render's free tier, so the
+    # SQLite history and uploaded thumbnails live on the container's ephemeral
+    # filesystem and reset on restart/redeploy. For durable history, upgrade to
+    # a paid plan and add a `disk:` block mounted at .../database, or use an
+    # external database.
